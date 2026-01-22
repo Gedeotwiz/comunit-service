@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 export function VerifyAccess(passRole){
     return (req,res,next)=>{
        const token = req.headers['auth-token']
+       console.log(token)
        if(!token){
          return res.status(404).json({message:"No token provided"})
        }else{
