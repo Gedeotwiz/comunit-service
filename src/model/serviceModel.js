@@ -32,7 +32,6 @@ serviceSchema.pre(/^find/,function(next){
     }).populate({
         path:"provider",select:"names email"
     })
-    next()
 })
 
 const Service = mongoose.model("Service",serviceSchema)

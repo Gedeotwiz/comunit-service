@@ -38,5 +38,15 @@ class ServiceController{
   }
 };
 
+static findServices=async(req,res)=>{
+   const service = await Service.find()
+   if(!service){
+     return res.status(404).json({message:"service not found"})
+   }else{
+     return res.status(200).json({message:"service successfuly retrived",service})
+   }
+}
+
 }
 export default ServiceController
+
