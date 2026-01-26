@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-    client:{
+    clientId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    service:{
+    serviceId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Service"
 
@@ -34,8 +34,8 @@ const bookingSchema = new mongoose.Schema({
 })
 bookingSchema.pre(/^find/,function(next){
     this.populate([
-        {path:"client",select:"names email"},
-        {path:"service",select:"title"}
+        {path:"clientId",select:"names email"},
+        {path:"serviceId",select:"title"}
     ])
 })
 
