@@ -4,6 +4,6 @@ import { VerifyAccess } from "../midleware/virifyAccess.js"
 
 
 const router = express.Router()
- router.post("/create",VerifyAccess("provider"),CategoryController.createCategory)
+ router.post("/create",VerifyAccess(["provider","admin"]),CategoryController.createCategory)
  router.get("/",CategoryController.findAllCategory)
 export default router

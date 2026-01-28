@@ -5,9 +5,9 @@ import { VerifyAccess } from "../midleware/virifyAccess.js"
 
 const router = express.Router()
 
-router.post("/",VerifyAccess("client"),BookingServiceController.booking)
-router.get("/",VerifyAccess("provider"),BookingServiceController.getAllBooking)
-router.put("/status/:id",VerifyAccess("provider"),BookingServiceController.changeStatus)
+router.post("/",VerifyAccess(["client","admin"]),BookingServiceController.booking)
+router.get("/",VerifyAccess(["provider","admin"]),BookingServiceController.getAllBooking)
+router.put("/status/:id",VerifyAccess(["provider","admin"]),BookingServiceController.changeStatus)
 
 
 export default router

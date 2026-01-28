@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-export function VerifyAccess(passRole){
+export function VerifyAccess(passRoles){
     return (req,res,next)=>{
        const token = req.headers['auth-token']
        console.log(token)
@@ -10,7 +10,7 @@ export function VerifyAccess(passRole){
          try {
             const verifyToken = jwt.verify(token,process.env.SCRET_KEY,{expiresIn:'1d'})
             req.user=verifyToken.user
-            if(passRole != verifyToken.user.role){
+            if(!passRoles.includes(verifyToken.user.role)){
                 return res.status(401).json({message:"Please you don't have access"})
             }else{
                 return next()
