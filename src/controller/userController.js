@@ -1,6 +1,7 @@
 import User from "../model/userModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { generateToken } from "../utils/jwtUtils.js"
 
 
 class Controller{
@@ -32,7 +33,7 @@ static login = async(req,res)=>{
       if(!comparePassword){
          return res.status(404).json({message:"Invald password"})
       }else{
-         const token = jwt.sign({user:user},process.env.SCRET_KEY,{expiresIn:"1d"})
+       const token = generateToken(user?._id)
          return res.status(201).json({message:"Login successfuly",token})
       }
    }
