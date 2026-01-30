@@ -3,7 +3,6 @@
 import Service from '../model/serviceModel.js';
 import Category from '../model/category.js';
 import User from '../model/userModel.js';
-// import { sendEmailNotification } from "../utils/emailUtils.js";
 import { sendEmail } from '../services/sendEmail.js';
 
 class ServiceController {
@@ -51,8 +50,6 @@ class ServiceController {
           serviceDescription: req.body.description,
         });
       });
-
-      // sendEmailNotification(users,"New Service Posted",'<p> there is new serivice posted so you are able to book it right now!</p>')
 
       return res.status(201).json({
         message: 'Service successfully created',
