@@ -25,13 +25,14 @@ class Controller{
 
 static login = async(req,res)=>{
    const {email,password} = req.body
+   console.log(req.body)
    const user = await User.findOne({email})
    if(!user){
-      return res.status(404).json({message:"Invalid email"})
+      return res.status(404).json({message:"Invalid email or password"})
    }else{
       const comparePassword = bcrypt.compareSync(password,user.password)
       if(!comparePassword){
-         return res.status(404).json({message:"Invald password"})
+         return res.status(404).json({message:"Invald email or password"})
       }else{
        const token = generateToken(user?._id)
          return res.status(201).json({message:"Login successfuly",token})

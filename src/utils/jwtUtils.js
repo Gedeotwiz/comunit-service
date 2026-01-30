@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 
 export function generateToken(id){
-     return jwt.sign(id, process.env.SCRET_KEY, {expiresIn:"1d"})
+     return jwt.sign({id}, process.env.SCRET_KEY, {expiresIn:"1d"})
 }
 
 export function DecodToken(token){
