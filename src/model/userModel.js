@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema({
@@ -18,6 +19,13 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum:['client','provider','admin'],
         default:"client"
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+    verifyToken:{
+        type:String
     },
     createdAt:{
        type:Date,

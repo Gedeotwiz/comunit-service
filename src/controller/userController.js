@@ -1,21 +1,26 @@
 import User from "../model/userModel.js"
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
 import { generateToken } from "../utils/jwtUtils.js"
+import { sendEmail } from "../services/sendEmail.js"
+import { verifyAccountTemplate } from "../utils/verifyEmailTamplent.js"
+import { DecodToken } from "../utils/jwtUtils.js"
 
 
 class Controller{
 
  static signup=async(req,res)=> {
-      const {names,email,password,role} = req.body
+      const {names,email,password,role,verifyToken} = req.body
        const hashPassword = bcrypt.hashSync(req.body.password,10)
       try {
           const user = await User.create({names,email,password:hashPassword,role})
-      if(!user){
-         return res.status(404).json({message:"user not found"})
-      }else{
+          const token = generateToken(user?.id)
+          user.verifyToken = token
+          user.save()
+
+          const verifyLink = `${process.env.CLIENT_URL}/verified-email/${token}`
+          await sendEmail(verifyAccountTemplate(email,verifyLink))
+      
          return res.status(201).json({message:"User successfuly created",user})
-      }
       } catch (error) {
          return res.status(500).json({message:`Create user failed ${error}`})
         
@@ -23,9 +28,42 @@ class Controller{
      
 }
 
+static verifyEmailAcont = async (req, res) => {
+  try {
+    const { verifyToken } = req.params;
+
+    const decodedToken = DecodToken(verifyToken);
+    if (!decodedToken?.id) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(200).json({
+        status: 200,
+        message: "Email already verified",
+      });
+    }
+
+    user.isVerified = true;
+    await user.save();
+
+    return res.status(200).json({
+      status: 200,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 static login = async(req,res)=>{
    const {email,password} = req.body
-   console.log(req.body)
    const user = await User.findOne({email})
    if(!user){
       return res.status(404).json({message:"Invalid email or password"})

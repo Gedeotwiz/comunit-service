@@ -4,6 +4,7 @@ import Service from '../model/serviceModel.js';
 import Category from '../model/category.js';
 import User from '../model/userModel.js';
 import { sendEmail } from '../services/sendEmail.js';
+import { emailNotificationTemplate } from '../utils/emailNotificationTamplent.js';
 
 class ServiceController {
   static createService = async (req, res) => {
@@ -44,11 +45,11 @@ class ServiceController {
           .json({ status: 404, message: 'users not found' });
       }
       users.map(async (user) => {
-        await sendEmail({
-          receiverEmail: user.email,
-          title: req.body.title,
-          serviceDescription: req.body.description,
-        });
+        await sendEmail(emailNotificationTemplate(
+           user.email,
+           req.body.title,
+           req.body.description,
+        ));
       });
 
       return res.status(201).json({
