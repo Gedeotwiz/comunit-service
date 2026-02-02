@@ -4,6 +4,7 @@ import { generateToken } from "../utils/jwtUtils.js"
 import { sendEmail } from "../services/sendEmail.js"
 import { verifyAccountTemplate } from "../utils/verifyEmailTamplent.js"
 import { DecodToken } from "../utils/jwtUtils.js"
+import { resetPasswordTemplate } from "../routes/resetPasswordTamplent.js"
 
 
 class Controller{
@@ -67,6 +68,8 @@ static login = async(req,res)=>{
    const user = await User.findOne({email})
    if(!user){
       return res.status(404).json({message:"Invalid email or password"})
+   }else if(user.isVerified !== true){
+       return res.status(404).json({status:404,message:"Please verify your accont"})
    }else{
       const comparePassword = bcrypt.compareSync(password,user.password)
       if(!comparePassword){
@@ -76,6 +79,43 @@ static login = async(req,res)=>{
          return res.status(201).json({message:"Login successfuly",token})
       }
    }
+}
+
+static forgotPassword = async (req,res) =>{
+   const email = req.body
+   try {
+      const user = await User.findOne(email)
+      
+   if(!user){
+      return res.status(404).json({status:404,message:"user not found"})
+   }
+
+   const token = generateToken(user?._id)
+   user.resetPasswordToken =token
+   user.save()
+
+   const link = `${process.env.CLIENT_URL}/verified-email/${token}`
+   await sendEmail(resetPasswordTemplate(user.email,link))
+   return res.status(201).json({status:201,message:"check your email notified"})
+   } catch (error) {
+      return res.status(500).json({status:500,error})
+   }
+}
+
+static resetPassword = async (req,res)=>{
+   const {newPassword} = req.body
+   const token = req.params.token
+
+   const decodedToken = DecodToken(token)
+
+   const user = await User.findById(decodedToken?.id)
+     if(!user){
+      return res.status(404).json({status:404,message:"user not found"})
+   }
+   user.password = bcrypt.hashSync(newPassword,10)
+   user.resetPasswordToken=undefined
+   await user.save()
+   return res.status(201).json({status:201,message:"Password already changed"})
 }
 
 static getAllUser = async(req,res)=>{

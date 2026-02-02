@@ -15,4 +15,6 @@ router.delete("/users",VerifyAccess(["admin"]),Controller.deletAllUser)
 router.get("/:id",VerifyAccess(["admin"]),Controller.getOneUser)
 router.patch("/:id",VerifyAccess(["admin"]),Controller.updateUser)
 router.get("/verify/:verifyToken",Controller.verifyEmailAcont)
+router.post("/forgot",Controller.forgotPassword)
+router.post("/reset/:token",Controller.resetPassword)
 export default router
